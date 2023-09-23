@@ -18,11 +18,8 @@ api = Api(app)
 
 class Plants(Resource):
     def get(self):
-        # plants = [plant for plant in ]
-        return make_response(jsonify([{
-            "id": plants.id,
-            "name": plants.name
-        }for plants in Plant.query.all()]), 200)
+        plants = [plant.to_dict() for plant in Plant.query.all()]
+        return make_response(jsonify(plants), 200)
     
     def post(self):
         da = request.get_json()
@@ -48,6 +45,19 @@ class PlantByID(Resource):
 
         return make_response(
             jsonify(plant), 200
+        )
+    
+
+    def delete(self, id):
+        plant = Plant.query.filter_by(id = id).first_or_404()
+
+        db.session.delete(plant)
+        db.session.commit()
+
+        return make_response(
+            jsonify({
+                "message": "plant deleted successfully"
+            }), 200
         )
 
     
